@@ -26,7 +26,7 @@ protected:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere)
-	float ForceValue = 1000.0f;
+	FVector ForceValue;
 
 	virtual void Jump() override;
 
@@ -41,6 +41,4 @@ public:
 private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
-	bool IsJump = false;
-
 };

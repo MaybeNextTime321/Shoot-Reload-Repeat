@@ -24,20 +24,18 @@ void ASRR_BaseCharacter::BeginPlay()
 
 void ASRR_BaseCharacter::Jump()
 {
-	Super::Jump();
-	IsJump = true;
+		Super::Jump();
 }
 
 void ASRR_BaseCharacter::StopJumping()
 {
 	Super::StopJumping();
-	IsJump = false;
 }
 
 void ASRR_BaseCharacter::Force()
 {
 	FVector LaunchVector = GetActorRotation().Vector().GetSafeNormal() * ForceValue;
-	LaunchCharacter(LaunchVector, false, false);
+	LaunchCharacter(LaunchVector, false, true);
 }
 
 void ASRR_BaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
