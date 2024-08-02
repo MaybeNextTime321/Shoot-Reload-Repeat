@@ -35,6 +35,9 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = Character)
 	void Force();
 
+	UFUNCTION(BlueprintCallable, Category = "Movement")
+	float GetMovementDegree()const;
+
 public:	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

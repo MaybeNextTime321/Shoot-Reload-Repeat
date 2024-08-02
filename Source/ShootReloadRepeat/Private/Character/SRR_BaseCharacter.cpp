@@ -34,7 +34,11 @@ void ASRR_BaseCharacter::StopJumping()
 
 void ASRR_BaseCharacter::Force()
 {
-	FVector LaunchVector = GetActorRotation().Vector().GetSafeNormal() * ForceValue;
+	FVector LaunchVector = GetActorForwardVector() * ForceValue;
+	if (!GetVelocity().IsNearlyZero())
+	{
+		LaunchVector = GetVelocity().GetSafeNormal() * ForceValue;
+	}
 	LaunchCharacter(LaunchVector, false, true);
 }
 
@@ -48,6 +52,17 @@ void ASRR_BaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	InputComponent->BindAxis("Look Right", this, &ASRR_BaseCharacter::AddControllerYawInput);
 	InputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ASRR_BaseCharacter::Jump);
 	InputComponent->BindAction("Force", EInputEvent::IE_Pressed, this, &ASRR_BaseCharacter::Force);
+}
+
+float ASRR_BaseCharacter::GetMovementDegree() const
+{
+	const FVector VelocityNormal = GetVelocity().GetSafeNormal();
+	const FVector ForwardVector = GetActorForwardVector();
+
+	const float Degree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(ForwardVector, VelocityNormal)));
+	const float Sign = FMath::Sign(FVector::CrossProduct(ForwardVector, VelocityNormal).Z);
+
+	return Degree * Sign;
 }
 
 void ASRR_BaseCharacter::MoveForward(float Value)
