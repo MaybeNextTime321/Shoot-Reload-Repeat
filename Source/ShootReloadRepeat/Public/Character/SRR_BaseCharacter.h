@@ -7,6 +7,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class USRRHealthComponent;;
 
 UCLASS()
 class SHOOTRELOADREPEAT_API ASRR_BaseCharacter : public ACharacter
@@ -15,6 +16,7 @@ class SHOOTRELOADREPEAT_API ASRR_BaseCharacter : public ACharacter
 
 public:
 	ASRR_BaseCharacter();
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,11 +30,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	FVector ForceValue;
 
+	UPROPERTY(EditDefaultsOnly)
+	USRRHealthComponent* HealthComponent;
+
 	virtual void Jump() override;
 
 	virtual void StopJumping() override;
 
-	UFUNCTION(BlueprintCallable, Category = Character)
+	UFUNCTION(BlueprintCallable, Category = Character, Server, Reliable)
 	void Force();
 
 	UFUNCTION(BlueprintCallable, Category = "Movement")

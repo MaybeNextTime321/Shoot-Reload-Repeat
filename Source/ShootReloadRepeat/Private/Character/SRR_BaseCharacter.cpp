@@ -2,6 +2,7 @@
 #include "Character/SRR_BaseCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SRRHealthComponent.h"
 
 ASRR_BaseCharacter::ASRR_BaseCharacter()
 {
@@ -15,6 +16,20 @@ ASRR_BaseCharacter::ASRR_BaseCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("Camera Component");
 	CameraComponent->SetupAttachment(ArmComponeent, ArmComponeent->SocketName);
 
+	HealthComponent = CreateDefaultSubobject<USRRHealthComponent>("Health Component");
+	HealthComponent->SetIsReplicated(true);
+
+}
+
+float ASRR_BaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float ReturnValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	if (HealthComponent)
+	{
+		ReturnValue = HealthComponent->TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	}
+	UE_LOG(LogTemp, Error, TEXT("Got Damage"));
+	return ReturnValue;
 }
 
 void ASRR_BaseCharacter::BeginPlay()
@@ -32,7 +47,7 @@ void ASRR_BaseCharacter::StopJumping()
 	Super::StopJumping();
 }
 
-void ASRR_BaseCharacter::Force()
+void ASRR_BaseCharacter::Force_Implementation()
 {
 	FVector LaunchVector = GetActorForwardVector() * ForceValue;
 	if (!GetVelocity().IsNearlyZero())
