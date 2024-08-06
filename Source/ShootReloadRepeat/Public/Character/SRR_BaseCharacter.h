@@ -8,6 +8,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class USRRHealthComponent;;
+class UAnimMontage;
 
 UCLASS()
 class SHOOTRELOADREPEAT_API ASRR_BaseCharacter : public ACharacter
@@ -33,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	USRRHealthComponent* HealthComponent;
 
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* DeathAnimation;
+
 	virtual void Jump() override;
 
 	virtual void StopJumping() override;
@@ -49,4 +53,5 @@ public:
 private:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+	void OnDeath();
 };

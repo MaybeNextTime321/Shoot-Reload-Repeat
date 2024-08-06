@@ -16,6 +16,11 @@ void USRRHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(USRRHealthComponent, CurrentHealth)
 }
 
+bool USRRHealthComponent::IsDead() const
+{
+	return FMath::IsNearlyZero(CurrentHealth);
+}
+
 void USRRHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -29,6 +34,11 @@ void USRRHealthComponent::BeginPlay()
 	
 }
 
+void USRRHealthComponent::OnDeath()
+{
+	OnDeathDelegate.Broadcast();
+}
+
 void USRRHealthComponent::OnHealthChange()
 {
 	const auto Owner = Cast<ASRR_BaseCharacter>(GetOwner());
@@ -39,7 +49,7 @@ void USRRHealthComponent::OnHealthChange()
 
 	if (Owner->GetLocalRole() == ROLE_Authority)
 	{
-		FString HealthMessage = FString::Printf(TEXT("You actor %s have %f health remaining"), *Owner->GetName(),CurrentHealth);
+		FString HealthMessage = FString::Printf(TEXT("Server actor %s have %f health remaining"), *Owner->GetName(),CurrentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, HealthMessage);
 	}
 
@@ -48,21 +58,22 @@ void USRRHealthComponent::OnHealthChange()
 		FString HealthMessage = FString::Printf(TEXT("You now have %f health remaining"), CurrentHealth);
 		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, HealthMessage);
 
-		if (CurrentHealth <= 0)
+		if (FMath::IsNearlyZero(CurrentHealth))
 		{
 			FString DeathMessage = FString::Printf(TEXT("You are die"));
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, DeathMessage);
 		}
 	}
-	if (CurrentHealth <= 0)
+
+	if (IsDead())
 	{
-		GetOwner()->Destroy();
+		OnDeath();
 	}
 }
 
 void USRRHealthComponent::SetCurrentHealth(float NewCurrentHealth)
 {
-	if (!GetOwner())
+	if (!GetOwner() || IsDead())
 	{
 		return;
 	}

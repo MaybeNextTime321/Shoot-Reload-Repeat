@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "SRRHealthComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnDeadSignature)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SHOOTRELOADREPEAT_API USRRHealthComponent : public UActorComponent
@@ -13,6 +14,8 @@ class SHOOTRELOADREPEAT_API USRRHealthComponent : public UActorComponent
 public:	
 	USRRHealthComponent();
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	bool IsDead() const;
 
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetMaxHealth()const
@@ -31,6 +34,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	
+	FOnDeadSignature OnDeathDelegate;
 
 protected:
 	virtual void BeginPlay() override;
@@ -46,7 +51,9 @@ protected:
 
 	void OnHealthChange();
 
-public:	
+private:
+
+	void OnDeath();
 
 		
 };

@@ -3,6 +3,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SRRHealthComponent.h"
+#include "Animation/AnimMontage.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ASRR_BaseCharacter::ASRR_BaseCharacter()
 {
@@ -18,7 +20,7 @@ ASRR_BaseCharacter::ASRR_BaseCharacter()
 
 	HealthComponent = CreateDefaultSubobject<USRRHealthComponent>("Health Component");
 	HealthComponent->SetIsReplicated(true);
-
+	HealthComponent->OnDeathDelegate.AddUObject(this, &ASRR_BaseCharacter::OnDeath);
 }
 
 float ASRR_BaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -88,5 +90,19 @@ void ASRR_BaseCharacter::MoveForward(float Value)
 void ASRR_BaseCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), FMath::Clamp(Value, -1.0f, 1.0f));
+}
+
+void ASRR_BaseCharacter::OnDeath()
+{
+
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		SetLifeSpan(3.0f);
+		GetCharacterMovement()->DisableMovement();
+	}
+	else
+	{
+		PlayAnimMontage(DeathAnimation);
+	}
 }
 
