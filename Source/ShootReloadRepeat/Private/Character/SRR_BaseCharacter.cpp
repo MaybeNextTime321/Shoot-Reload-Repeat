@@ -5,6 +5,7 @@
 #include "Components/SRRHealthComponent.h"
 #include "Animation/AnimMontage.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SRR_WeaponComponent.h"
 
 ASRR_BaseCharacter::ASRR_BaseCharacter()
 {
@@ -21,6 +22,8 @@ ASRR_BaseCharacter::ASRR_BaseCharacter()
 	HealthComponent = CreateDefaultSubobject<USRRHealthComponent>("Health Component");
 	HealthComponent->SetIsReplicated(true);
 	HealthComponent->OnDeathDelegate.AddUObject(this, &ASRR_BaseCharacter::OnDeath);
+
+	WeaponComponent = CreateDefaultSubobject<USRR_WeaponComponent>("Weapon Component");
 }
 
 float ASRR_BaseCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -97,6 +100,11 @@ void ASRR_BaseCharacter::OnDeath()
 
 	if (GetLocalRole() == ROLE_Authority)
 	{
+		if (WeaponComponent)
+		{
+			WeaponComponent->DestructWeapon();
+		}
+
 		SetLifeSpan(3.0f);
 		GetCharacterMovement()->DisableMovement();
 	}

@@ -29,6 +29,12 @@ public:
 		return CurrentHealth;
 	}
 
+	UFUNCTION(BlueprintPure, Category = "Health")
+	float GetCurrentHealthPercent()const
+	{
+		return MaxHealth > 0 ? CurrentHealth/MaxHealth : 0;
+	}
+
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void SetCurrentHealth(float CurrentHealth);
 

@@ -9,6 +9,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USRRHealthComponent;;
 class UAnimMontage;
+class USRR_WeaponComponent;
 
 UCLASS()
 class SHOOTRELOADREPEAT_API ASRR_BaseCharacter : public ACharacter
@@ -27,6 +28,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere)
+	USRR_WeaponComponent* WeaponComponent;
 
 	UPROPERTY(EditAnywhere)
 	FVector ForceValue;
